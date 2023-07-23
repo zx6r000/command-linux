@@ -11,13 +11,17 @@ serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
         . . # . .
         . . # . .
         `)
-    if (data.includes("$$$")) {
-        data_tot = "" + data_tot + data
+    if (data == "closed") {
+        basic.showIcon(IconNames.Skull)
     } else {
-        bluetooth.uartWriteString("" + data_tot + data)
-        data_tot = ""
+        if (data.includes("$$$")) {
+            data_tot = "" + data_tot + data
+        } else {
+            bluetooth.uartWriteString("" + data_tot + data)
+            data_tot = ""
+        }
+        basic.clearScreen()
     }
-    basic.clearScreen()
 })
 bluetooth.onBluetoothConnected(function () {
     basic.showIcon(IconNames.StickFigure)
@@ -27,16 +31,26 @@ bluetooth.onBluetoothDisconnected(function () {
 })
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () {
     command = bluetooth.uartReadUntil(serial.delimiters(Delimiters.NewLine))
-    serial.writeLine(command)
-    datalogger.log(
-    datalogger.createCV("type", "command"),
-    datalogger.createCV("message", command)
-    )
-    basic.showIcon(IconNames.Sword)
-    if (command == "close") {
-        basic.showIcon(IconNames.No)
+    if (command == "RAZ") {
+        basic.showNumber(3)
+        basic.pause(500)
+        basic.showNumber(2)
+        basic.pause(500)
+        basic.showNumber(1)
+        basic.pause(500)
+        control.reset()
+    } else {
+        serial.writeLine(command)
+        datalogger.log(
+        datalogger.createCV("type", "command"),
+        datalogger.createCV("message", command)
+        )
+        basic.showIcon(IconNames.Sword)
+        if (command == "close") {
+            basic.showIcon(IconNames.No)
+        }
+        basic.clearScreen()
     }
-    basic.clearScreen()
 })
 let command = ""
 let data_tot = ""
