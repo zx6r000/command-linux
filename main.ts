@@ -4,13 +4,7 @@ serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
     datalogger.createCV("type", "respons"),
     datalogger.createCV("message", data)
     )
-    basic.showLeds(`
-        . . # . .
-        . # # # .
-        . . # . .
-        . . # . .
-        . . # . .
-        `)
+    basic.showIcon(IconNames.Sword)
     if (data == "closed") {
         basic.showIcon(IconNames.Skull)
     } else {
@@ -31,13 +25,14 @@ bluetooth.onBluetoothDisconnected(function () {
 })
 bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () {
     command = bluetooth.uartReadUntil(serial.delimiters(Delimiters.NewLine))
-    if (command == "RAZ") {
+    if (command.includes("raz")) {
         basic.showNumber(3)
         basic.pause(500)
         basic.showNumber(2)
         basic.pause(500)
         basic.showNumber(1)
         basic.pause(500)
+        serial.writeLine(command)
         control.reset()
     } else {
         serial.writeLine(command)
@@ -45,7 +40,13 @@ bluetooth.onUartDataReceived(serial.delimiters(Delimiters.NewLine), function () 
         datalogger.createCV("type", "command"),
         datalogger.createCV("message", command)
         )
-        basic.showIcon(IconNames.Sword)
+        basic.showLeds(`
+            . . # . .
+            . # # # .
+            . . # . .
+            . . # . .
+            . . # . .
+            `)
         if (command == "close") {
             basic.showIcon(IconNames.No)
         }
