@@ -1,3 +1,6 @@
+datalogger.onLogFull(function () {
+    datalogger.deleteLog()
+})
 serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
     data = serial.readLine()
     datalogger.log(
